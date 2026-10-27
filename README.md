@@ -46,11 +46,10 @@ The recommended free setup is Vercel Hobby backed by a Neon PostgreSQL database.
 
 Vercel project settings:
 
-- Framework preset: `Vite`
 - Build command: `npm run build`
-- Output directory: `public`
-- Install command: `npm install`
-- Node.js runtime: `24.x`
+- Install command: `npm install --include=dev`
+- Leave the framework preset and output directory at automatic detection. The build writes frontend assets to `public`, and Vercel serves that directory while the root Express export handles API requests.
+- Do not add a custom runtime declaration.
 
 Set these Vercel environment variables:
 
