@@ -9,8 +9,7 @@ describe('document access control', () => {
   afterEach(() => database?.close());
   it('only allows shared users to read a document', async () => {
     database = new DatabaseSync(':memory:');
-    database.exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE); CREATE TABLE documents (id INTEGER PRIMARY KEY, title TEXT, content TEXT, owner_id INTEGER, updated_at TEXT); CREATE TABLE shares (document_id INTEGER, user_id INTEGER, PRIMARY KEY (document_id, user_id));');
-    database.exec("INSERT INTO users VALUES (1, 'Maya', 'maya@example.com'), (2, 'Theo', 'theo@example.com'), (3, 'Unauthorised', 'una@example.com'); INSERT INTO documents VALUES (1, 'Private', '{\"type\":\"doc\"}', 1, datetime('now'));");
+    database.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, subscription_tier TEXT NOT NULL DEFAULT 'free'); CREATE TABLE documents (id INTEGER PRIMARY KEY, title TEXT, content TEXT, owner_id INTEGER, updated_at TEXT); CREATE TABLE shares (document_id INTEGER, user_id INTEGER, PRIMARY KEY (document_id, user_id)); CREATE TABLE import_usage (user_id INTEGER NOT NULL, import_date TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (user_id, import_date)); INSERT INTO users VALUES (1, 'Maya', 'maya@example.com', 'free'), (2, 'Theo', 'theo@example.com', 'free'), (3, 'Unauthorised', 'una@example.com', 'free'); INSERT INTO documents VALUES (1, 'Private', '{\"type\":\"doc\"}', 1, datetime('now'));");
     const app = createApp(database);
     const server = app.listen(0);
     await once(server, 'listening');
@@ -21,6 +20,8 @@ describe('document access control', () => {
     assert.equal(privateResponse.status, 404);
     const ownerResponse = await fetch(`${url}/api/documents/1`, { headers: { 'x-user-id': '1' } });
     assert.equal(ownerResponse.status, 200);
+    const usageResponse = await fetch(`${url}/api/me/usage`, { headers: { 'x-user-id': '1' } });
+    assert.equal(usageResponse.status, 200);
     database.prepare('INSERT INTO shares VALUES (1, 2)').run();
     const sharedResponse = await fetch(`${url}/api/documents/1`, { headers: { 'x-user-id': '2' } });
     assert.equal(sharedResponse.status, 200);
