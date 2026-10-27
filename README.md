@@ -42,18 +42,22 @@ The product deliberately does not claim simultaneous real-time editing, version 
 
 ## Production deployment
 
-The recommended free setup is one Render Web Service backed by a Neon PostgreSQL database. The service builds and serves both frontend and API:
+The recommended free setup is Vercel Hobby backed by a Neon PostgreSQL database. Vercel recognizes the root `index.ts` Express export, builds the Vite frontend into `public`, and serves the frontend assets while routing requests to the Express function.
 
-- Build command: `npm install && npm run build`
-- Start command: `npm start`
-- Health check: `/api/health`
+Vercel project settings:
 
-Set these Render environment variables:
+- Framework preset: `Vite`
+- Build command: `npm run build`
+- Output directory: `public`
+- Install command: `npm install`
+- Node.js runtime: `24.x`
+
+Set these Vercel environment variables:
 
 - `DATABASE_URL`: Neon connection string, kept secret
 - `NODE_ENV=production`
-- `CORS_ORIGIN`: optional comma-separated frontend origins; leave empty for the single-service same-origin setup
-- `VITE_API_URL`: optional API origin for a separately hosted frontend; leave empty for the single-service setup
-- `PORT`: supplied by Render automatically
+- `CORS_ORIGIN`: optional comma-separated frontend origins; leave empty for the same-origin setup
+- `VITE_API_URL`: optional API origin for a separately hosted frontend; leave empty for the same-origin setup
+- `PORT`: not required for Vercel; local `npm start` defaults to 3001
 
-On startup, a fresh Neon database receives the `users`, `documents`, `shares`, and `import_usage` tables plus the two demo users. No local SQLite file is used when `DATABASE_URL` is set. No deployment has been performed from this workspace and no live URL is claimed.
+On cold start, a fresh Neon database receives the `users`, `documents`, `shares`, and `import_usage` tables plus the two demo users. `DATABASE_URL` is required by the Vercel entrypoint, so no local SQLite file is used in production. No deployment has been performed from this workspace and no live URL is claimed.

@@ -11,10 +11,10 @@
 
 ## Remaining manual steps
 
-1. Create a Neon PostgreSQL database and copy its connection string into Render as `DATABASE_URL`.
-2. Create a Render Web Service from this repository with build command `npm install && npm run build` and start command `npm start`.
-3. Set `NODE_ENV=production`; optionally set `CORS_ORIGIN` and `VITE_API_URL` only when using separate origins. Verify `/api/health`, create/edit/refresh, imports, sharing, quotas, deletion, and exports on the live service.
+1. Create or select the Neon PostgreSQL database and copy its connection string into Vercel as `DATABASE_URL`.
+2. Import the existing GitHub repository into a Vercel Hobby project. Use the settings in `vercel.json`: Vite framework, `npm run build`, and `public` output.
+3. Set `NODE_ENV=production`; optionally set `CORS_ORIGIN` and `VITE_API_URL` only when using separate origins. Verify `/api/health`, create/edit/refresh, imports, sharing, quotas, deletion, and exports on the live deployment.
 4. Record a 3 to 5 minute walkthrough and update `VIDEO_URL.txt` and this file.
 5. Upload the complete project folder and supporting screenshots to one Google Drive folder.
 
-Known limitations: the frontend uses a lightweight demo session switcher rather than production authentication, and the Render/Neon deployment still requires the owner's accounts and credentials. The application has not been deployed or given a live URL from this workspace.
+Known limitations: the frontend uses a lightweight demo session switcher rather than production authentication, and the Vercel/Neon deployment still requires the owner's accounts and credentials. The application has not been deployed or given a live URL from this workspace.

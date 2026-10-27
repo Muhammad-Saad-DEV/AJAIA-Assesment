@@ -45,7 +45,7 @@ function postgresAdapter(clientOrPool: Pool | PoolClient): AppDatabase {
       return {
         get: async (...params) => (await clientOrPool.query(query, params)).rows[0] as DbRow | undefined,
         all: async (...params) => (await clientOrPool.query(query, params)).rows as DbRow[],
-        run: async (...params) => { const insertQuery = /^\s*INSERT\b/i.test(query) && !/\bRETURNING\b/i.test(query) ? `${query} RETURNING id` : query; const result = await clientOrPool.query(insertQuery, params); return { lastInsertRowid: result.rows[0]?.id, changes: result.rowCount || 0 }; }
+        run: async (...params) => { const needsId = /^\s*INSERT\b/i.test(query) && /\bINTO documents\b/i.test(query) && !/\bRETURNING\b/i.test(query); const insertQuery = needsId ? `${query} RETURNING id` : query; const result = await clientOrPool.query(insertQuery, params); return { lastInsertRowid: result.rows[0]?.id, changes: result.rowCount || 0 }; }
       };
     },
     exec: async (sql) => { await clientOrPool.query(sql); },
